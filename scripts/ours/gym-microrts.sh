@@ -1,0 +1,22 @@
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsMining-v1 --track --seed 1 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsMining-v1 --track --seed 2 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsMining-v1 --track --seed 3 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsProduceCombatUnitsShapedReward-v1 --track --seed 1 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsProduceCombatUnitsShapedReward-v1 --track --seed 2 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsProduceCombatUnitsShapedReward-v1 --track --seed 3 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsAttackShapedReward-v1 --track --seed 1 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsAttackShapedReward-v1 --track --seed 2 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsAttackShapedReward-v1 --track --seed 3 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsRandomEnemyShapedReward3-v1 --track --seed 1 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsRandomEnemyShapedReward3-v1 --track --seed 2 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete.py --gym-id MicrortsRandomEnemyShapedReward3-v1 --track --seed 3 --wandb-project-name ppo-implementation-details
+
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete_mask.py --gym-id MicrortsProduceCombatUnitsShapedReward-v1 --track --seed 1 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete_mask.py --gym-id MicrortsProduceCombatUnitsShapedReward-v1 --track --seed 2 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete_mask.py --gym-id MicrortsProduceCombatUnitsShapedReward-v1 --track --seed 3 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete_mask.py --gym-id MicrortsAttackShapedReward-v1 --track --seed 1 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete_mask.py --gym-id MicrortsAttackShapedReward-v1 --track --seed 2 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete_mask.py --gym-id MicrortsAttackShapedReward-v1 --track --seed 3 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete_mask.py --gym-id MicrortsRandomEnemyShapedReward3-v1 --track --seed 1 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete_mask.py --gym-id MicrortsRandomEnemyShapedReward3-v1 --track --seed 2 --wandb-project-name ppo-implementation-details
+OMP_NUM_THREADS=1 poetry run python ppo_multidiscrete_mask.py --gym-id MicrortsRandomEnemyShapedReward3-v1 --track --seed 3 --wandb-project-name ppo-implementation-details

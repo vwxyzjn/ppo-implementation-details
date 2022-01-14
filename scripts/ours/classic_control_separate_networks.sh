@@ -1,0 +1,9 @@
+OMP_NUM_THREADS=1 poetry run python ppo_shared.py --gym-id CartPole-v1 --track --seed 1 --wandb-project-name ppo-implementation-details --cuda False --total-timesteps 500000
+OMP_NUM_THREADS=1 poetry run python ppo_shared.py --gym-id CartPole-v1 --track --seed 2 --wandb-project-name ppo-implementation-details --cuda False --total-timesteps 500000
+OMP_NUM_THREADS=1 poetry run python ppo_shared.py --gym-id CartPole-v1 --track --seed 3 --wandb-project-name ppo-implementation-details --cuda False --total-timesteps 500000
+OMP_NUM_THREADS=1 poetry run python ppo_shared.py --gym-id Acrobot-v1 --track --seed 1 --wandb-project-name ppo-implementation-details --cuda False --total-timesteps 500000
+OMP_NUM_THREADS=1 poetry run python ppo_shared.py --gym-id Acrobot-v1 --track --seed 2 --wandb-project-name ppo-implementation-details --cuda False --total-timesteps 500000
+OMP_NUM_THREADS=1 poetry run python ppo_shared.py --gym-id Acrobot-v1 --track --seed 3 --wandb-project-name ppo-implementation-details --cuda False --total-timesteps 500000
+OMP_NUM_THREADS=1 poetry run python ppo_shared.py --gym-id MountainCar-v0 --track --seed 1 --wandb-project-name ppo-implementation-details --cuda False --total-timesteps 500000
+OMP_NUM_THREADS=1 poetry run python ppo_shared.py --gym-id MountainCar-v0 --track --seed 2 --wandb-project-name ppo-implementation-details --cuda False --total-timesteps 500000
+OMP_NUM_THREADS=1 poetry run python ppo_shared.py --gym-id MountainCar-v0 --track --seed 3 --wandb-project-name ppo-implementation-details --cuda False --total-timesteps 500000

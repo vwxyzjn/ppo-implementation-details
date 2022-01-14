@@ -1,0 +1,9 @@
+poetry run python ppo_atari_envpool.py --gym-id Pong-v5 --track --seed 1 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id Pong-v5 --track --seed 2 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id Pong-v5 --track --seed 3 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id BeamRider-v5 --track --seed 1 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id BeamRider-v5 --track --seed 2 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id BeamRider-v5 --track --seed 3 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id Breakout-v5 --track --seed 1 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id Breakout-v5 --track --seed 2 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id Breakout-v5 --track --seed 3 --wandb-project-name ppo-implementation-details

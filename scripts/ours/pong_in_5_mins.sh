@@ -1,0 +1,3 @@
+poetry run python ppo_atari_envpool.py --gym-id Pong-v5 --clip-coef=0.2 --num-envs=16 --num-minibatches=8 --num-steps=128 --update-epochs=3 --track --seed 1 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id Pong-v5 --clip-coef=0.2 --num-envs=16 --num-minibatches=8 --num-steps=128 --update-epochs=3 --track --seed 2 --wandb-project-name ppo-implementation-details
+poetry run python ppo_atari_envpool.py --gym-id Pong-v5 --clip-coef=0.2 --num-envs=16 --num-minibatches=8 --num-steps=128 --update-epochs=3 --track --seed 3 --wandb-project-name ppo-implementation-details

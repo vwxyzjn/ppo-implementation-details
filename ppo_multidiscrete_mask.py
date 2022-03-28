@@ -5,7 +5,7 @@ import time
 from distutils.util import strtobool
 
 import gym
-import gym_microrts  # fmt: off
+import gym_microrts  # noqa
 import numpy as np
 import torch
 import torch.nn as nn

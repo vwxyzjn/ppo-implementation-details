@@ -99,6 +99,22 @@ poetry run python ppo_atari_envpool.py --clip-coef=0.2 --num-envs=16 --num-minib
 poetry run python ppo_atari_envpool.py --gym-id Breakout-v5
 ```
 
+
+### Procgen
+
+Install dependencies:
+```
+poetry install -E procgen
+```
+Train agents:
+```
+poetry run python ppo_procgen.py
+```
+Train agents with experiment tracking:
+```
+poetry run python ppo_procgen.py --track
+```
+
 ## Reproduction of all of our results
 
-To reproduce the results run with `openai/baselines`, install our fork at [https://github.com/2022iclrblogpost/baselines](https://github.com/2022iclrblogpost/baselines). Then follow the scripts in `scripts/baselines`. To reproduce our results, follow the scripts in `scripts/ours`.
+To reproduce the results run with `openai/baselines`, install our fork at [hhttps://github.com/vwxyzjn/baselines](hhttps://github.com/vwxyzjn/baselines). Then follow the scripts in `scripts/baselines`. To reproduce our results, follow the scripts in `scripts/ours`.

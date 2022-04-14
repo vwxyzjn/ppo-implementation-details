@@ -2,6 +2,12 @@
 
 This repo contains the source code for the blog post *The 37 Implementation Details of Proximal Policy Optimization*
 
+* Blog post url: https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/
+* Tracked Weights and Biases experiments: https://wandb.ai/vwxyzjn/ppo-details
+
+If you like this repo, consider checking out CleanRL (https://github.com/vwxyzjn/cleanrl), the RL library that we used to build this repo.
+
+
 ## Get started
 
 Prerequisites:

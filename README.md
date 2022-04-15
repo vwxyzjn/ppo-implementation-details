@@ -1,4 +1,4 @@
-# PPO-Implementation-Deep-Dive
+# The 37 Implementation Details of Proximal Policy Optimization
 
 This repo contains the source code for the blog post *The 37 Implementation Details of Proximal Policy Optimization*
 

@@ -124,3 +124,17 @@ poetry run python ppo_procgen.py --track
 ## Reproduction of all of our results
 
 To reproduce the results run with `openai/baselines`, install our fork at [hhttps://github.com/vwxyzjn/baselines](hhttps://github.com/vwxyzjn/baselines). Then follow the scripts in `scripts/baselines`. To reproduce our results, follow the scripts in `scripts/ours`.
+
+
+## Citation
+
+```bibtex
+@inproceedings{shengyi2022the37implementation,
+  author = {Huang, Shengyi and Dossa, Rousslan Fernand Julien and Raffin, Antonin and Kanervisto, Anssi and Wang, Weixun},
+  title = {The 37 Implementation Details of Proximal Policy Optimization},
+  booktitle = {ICLR Blog Track},
+  year = {2022},
+  note = {https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/},
+  url  = {https://iclr-blog-track.github.io/2022/03/25/ppo-implementation-details/}
+}
+```

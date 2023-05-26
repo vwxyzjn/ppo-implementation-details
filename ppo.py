@@ -4,7 +4,7 @@ import random
 import time
 from distutils.util import strtobool
 
-import gym
+import gymnasium as gym
 import numpy as np
 import torch
 import torch.nn as nn
@@ -77,16 +77,23 @@ def parse_args():
     return args
 
 
-def make_env(gym_id, seed, idx, capture_video, run_name):
+def make_env(gym_id, idx, capture_video, run_name):
+    def should_record_video (episode_number): 
+         if episode_number % 10 == 0:
+             print('recording video')
+             return True
+         else: return False
+
     def thunk():
         env = gym.make(gym_id)
         env = gym.wrappers.RecordEpisodeStatistics(env)
         if capture_video:
             if idx == 0:
-                env = gym.wrappers.RecordVideo(env, f"videos/{run_name}")
-        env.seed(seed)
-        env.action_space.seed(seed)
-        env.observation_space.seed(seed)
+                env = gym.wrappers.RecordVideo(
+                    env, f"videos/{run_name}",
+                    episode_trigger=should_record_video,
+                    video_length=200
+                    )
         return env
 
     return thunk
@@ -158,7 +165,7 @@ if __name__ == "__main__":
 
     # env setup
     envs = gym.vector.SyncVectorEnv(
-        [make_env(args.gym_id, args.seed + i, i, args.capture_video, run_name) for i in range(args.num_envs)]
+        [make_env(args.gym_id, i, args.capture_video, run_name) for i in range(args.num_envs)]
     )
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
@@ -176,7 +183,7 @@ if __name__ == "__main__":
     # TRY NOT TO MODIFY: start the game
     global_step = 0
     start_time = time.time()
-    next_obs = torch.Tensor(envs.reset()).to(device)
+    next_obs = torch.Tensor(envs.reset(seed=args.seed)[0]).to(device)
     next_done = torch.zeros(args.num_envs).to(device)
     num_updates = args.total_timesteps // args.batch_size
 
@@ -200,15 +207,16 @@ if __name__ == "__main__":
             logprobs[step] = logprob
 
             # TRY NOT TO MODIFY: execute the game and log data.
-            next_obs, reward, done, info = envs.step(action.cpu().numpy())
+            next_obs, reward, done, truncated, info = envs.step(action.cpu().numpy())
             rewards[step] = torch.tensor(reward).to(device).view(-1)
             next_obs, next_done = torch.Tensor(next_obs).to(device), torch.Tensor(done).to(device)
 
             for item in info:
-                if "episode" in item.keys():
-                    print(f"global_step={global_step}, episodic_return={item['episode']['r']}")
-                    writer.add_scalar("charts/episodic_return", item["episode"]["r"], global_step)
-                    writer.add_scalar("charts/episodic_length", item["episode"]["l"], global_step)
+                if type(info[item][0]) is dict: 
+                    final_info = info[item][0]
+                    print(f"global_step={global_step}, episodic_return={final_info['episode']['r']}")
+                    writer.add_scalar("charts/episodic_return", final_info["episode"]["r"], global_step)
+                    writer.add_scalar("charts/episodic_length", final_info["episode"]["l"], global_step)
                     break
 
         # bootstrap value if not done

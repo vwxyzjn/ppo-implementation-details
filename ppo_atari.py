@@ -135,6 +135,14 @@ class Agent(nn.Module):
     def get_value(self, x):
         return self.critic(self.network(x / 255.0))
 
+    def get_action(self, x, action=None):
+        hidden = self.network(x / 255.0)
+        logits = self.actor(hidden)
+        probs = Categorical(logits=logits)
+        if action is None:
+            action = probs.sample()
+        return action, probs.log_prob(action), probs.entropy()
+
     def get_action_and_value(self, x, action=None):
         hidden = self.network(x / 255.0)
         logits = self.actor(hidden)

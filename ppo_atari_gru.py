@@ -129,8 +129,8 @@ class Agent(nn.Module):
             layer_init(nn.Linear(64 * 7 * 7, 512)),
             nn.ReLU(),
         )
-        self.lstm = nn.LSTM(512, 128)
-        for name, param in self.lstm.named_parameters():
+        self.gru = nn.GRU(512, 128)
+        for name, param in self.gru.named_parameters():
             if "bias" in name:
                 nn.init.constant_(param, 0)
             elif "weight" in name:
@@ -138,37 +138,34 @@ class Agent(nn.Module):
         self.actor = layer_init(nn.Linear(128, envs.single_action_space.n), std=0.01)
         self.critic = layer_init(nn.Linear(128, 1), std=1)
 
-    def get_states(self, x, lstm_state, done):
+    def get_states(self, x, gru_state, done):
         hidden = self.network(x / 255.0)
 
         # LSTM logic
-        batch_size = lstm_state[0].shape[1]
-        hidden = hidden.reshape((-1, batch_size, self.lstm.input_size))
+        batch_size = gru_state.shape[1]
+        hidden = hidden.reshape((-1, batch_size, self.gru.input_size))
         done = done.reshape((-1, batch_size))
         new_hidden = []
         for h, d in zip(hidden, done):
-            h, lstm_state = self.lstm(
+            h, gru_state = self.gru(
                 h.unsqueeze(0),
-                (
-                    (1.0 - d).view(1, -1, 1) * lstm_state[0],
-                    (1.0 - d).view(1, -1, 1) * lstm_state[1],
-                ),
+                (1.0 - d).view(1, -1, 1) * gru_state,
             )
             new_hidden += [h]
         new_hidden = torch.flatten(torch.cat(new_hidden), 0, 1)
-        return new_hidden, lstm_state
+        return new_hidden, gru_state
 
-    def get_value(self, x, lstm_state, done):
-        hidden, _ = self.get_states(x, lstm_state, done)
+    def get_value(self, x, gru_state, done):
+        hidden, _ = self.get_states(x, gru_state, done)
         return self.critic(hidden)
 
-    def get_action_and_value(self, x, lstm_state, done, action=None):
-        hidden, lstm_state = self.get_states(x, lstm_state, done)
+    def get_action_and_value(self, x, gru_state, done, action=None):
+        hidden, gru_state = self.get_states(x, gru_state, done)
         logits = self.actor(hidden)
         probs = Categorical(logits=logits)
         if action is None:
             action = probs.sample()
-        return action, probs.log_prob(action), probs.entropy(), self.critic(hidden), lstm_state
+        return action, probs.log_prob(action), probs.entropy(), self.critic(hidden), gru_state
 
 
 if __name__ == "__main__":
@@ -222,14 +219,11 @@ if __name__ == "__main__":
     start_time = time.time()
     next_obs = torch.Tensor(envs.reset()).to(device)
     next_done = torch.zeros(args.num_envs).to(device)
-    next_lstm_state = (
-        torch.zeros(agent.lstm.num_layers, args.num_envs, agent.lstm.hidden_size).to(device),
-        torch.zeros(agent.lstm.num_layers, args.num_envs, agent.lstm.hidden_size).to(device),
-    )  # hidden and cell states (see https://youtu.be/8HyCNIVRbSU)
+    next_gru_state = torch.zeros(agent.gru.num_layers, args.num_envs, agent.gru.hidden_size).to(device)
     num_updates = args.total_timesteps // args.batch_size
 
     for update in range(1, num_updates + 1):
-        initial_lstm_state = (next_lstm_state[0].clone(), next_lstm_state[1].clone())
+        initial_gru_state = next_gru_state.clone()
         # Annealing the rate if instructed to do so.
         if args.anneal_lr:
             frac = 1.0 - (update - 1.0) / num_updates
@@ -243,7 +237,7 @@ if __name__ == "__main__":
 
             # ALGO LOGIC: action logic
             with torch.no_grad():
-                action, logprob, _, value, next_lstm_state = agent.get_action_and_value(next_obs, next_lstm_state, next_done)
+                action, logprob, _, value, next_gru_state = agent.get_action_and_value(next_obs, next_gru_state, next_done)
                 values[step] = value.flatten()
             actions[step] = action
             logprobs[step] = logprob
@@ -264,7 +258,7 @@ if __name__ == "__main__":
         with torch.no_grad():
             next_value = agent.get_value(
                 next_obs,
-                next_lstm_state,
+                next_gru_state,
                 next_done,
             ).reshape(1, -1)
             if args.gae:
@@ -316,7 +310,7 @@ if __name__ == "__main__":
 
                 _, newlogprob, entropy, newvalue, _ = agent.get_action_and_value(
                     b_obs[mb_inds],
-                    (initial_lstm_state[0][:, mbenvinds], initial_lstm_state[1][:, mbenvinds]),
+                    initial_gru_state[:, mbenvinds],
                     b_dones[mb_inds],
                     b_actions.long()[mb_inds],
                 )

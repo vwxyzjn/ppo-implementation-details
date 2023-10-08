@@ -12,7 +12,7 @@ tensorboard = "^2.5.0"
 wandb = "0.12.1"
 pyglet = "^1.5.19"
 opencv-python = "^4.5.3"
-gym = "^0.22.0"
+gym = "^0.21.0"
 
 # Optional dependencies
 spyder =  {version = "^5.1.1", optional = true}

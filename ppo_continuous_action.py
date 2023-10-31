@@ -78,7 +78,7 @@ def parse_args():
     # fmt: on
     return args
 
-NUM_COMBS = 32
+NUM_COMBS = 16
 
 
 def make_env(gym_id, seed, idx, capture_video, run_name):
@@ -161,12 +161,13 @@ if __name__ == "__main__":
     run_name = f"{args.gym_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
     if args.track:
         import wandb
-
+        config = vars(args)
+        config.update(num_combs=NUM_COMBS)
         wandb.init(
             project=args.wandb_project_name,
             entity=args.wandb_entity,
             sync_tensorboard=True,
-            config=vars(args),
+            config=config,
             name=run_name,
             monitor_gym=True,
             save_code=True,

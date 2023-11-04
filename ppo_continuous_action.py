@@ -78,7 +78,7 @@ def parse_args():
     # fmt: on
     return args
 
-NUM_COMBS = 16
+NUM_COMBS = 32
 
 
 def make_env(gym_id, seed, idx, capture_video, run_name):

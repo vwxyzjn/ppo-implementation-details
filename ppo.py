@@ -117,7 +117,7 @@ class Agent(nn.Module):
             nn.Tanh(),
             layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01),
         )
-        self.support = nn.Parameter(torch.linspace(-30, 30, self.SUPPORT_SIZE), requires_grad=False)
+        self.support = nn.Parameter(torch.linspace(-50, 50, self.SUPPORT_SIZE), requires_grad=False)
 
     def get_value(self, x, return_logits=False):
         value_logits = self.critic(x)

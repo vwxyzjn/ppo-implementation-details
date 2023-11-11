@@ -1,0 +1,14 @@
+AutoRom
+ale-py==0.7.4
+einops
+gym[mujoco,atari,accept-rom-license]==0.21.0
+importlib-metadata==4.13.0
+numpy==1.18
+opencv-python==4.5.3.56
+protobuf<=3.20
+pybullet==3.1.8
+pyglet==1.5.19
+stable-baselines3[extra]==1.1.0
+tensorboard==2.5.0
+torch
+wandb

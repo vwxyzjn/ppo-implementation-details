@@ -3,6 +3,7 @@ import os
 import random
 import time
 from distutils.util import strtobool
+import einops
 
 import gym
 import numpy as np
@@ -10,7 +11,7 @@ import pybullet_envs  # noqa
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.distributions.normal import Normal
+from comb_utils import CombDistribution
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -77,6 +78,8 @@ def parse_args():
     # fmt: on
     return args
 
+NUM_COMBS = 32
+
 
 def make_env(gym_id, seed, idx, capture_video, run_name):
     def thunk():
@@ -114,23 +117,40 @@ class Agent(nn.Module):
             nn.Tanh(),
             layer_init(nn.Linear(64, 1), std=1.0),
         )
-        self.actor_mean = nn.Sequential(
+        self.actor_logits = nn.Sequential(
             layer_init(nn.Linear(np.array(envs.single_observation_space.shape).prod(), 64)),
             nn.Tanh(),
             layer_init(nn.Linear(64, 64)),
             nn.Tanh(),
-            layer_init(nn.Linear(64, np.prod(envs.single_action_space.shape)), std=0.01),
+            layer_init(nn.Linear(64, np.prod(envs.single_action_space.shape) * NUM_COMBS), std=0.01),
         )
-        self.actor_logstd = nn.Parameter(torch.zeros(1, np.prod(envs.single_action_space.shape)))
+        self.bounds = torch.stack(
+            (
+                torch.tensor(envs.single_action_space.low).flatten(),
+                torch.tensor(envs.single_action_space.high).flatten(),
+            ),
+            dim=-1,
+        )
 
     def get_value(self, x):
         return self.critic(x)
 
     def get_action_and_value(self, x, action=None):
-        action_mean = self.actor_mean(x)
-        action_logstd = self.actor_logstd.expand_as(action_mean)
-        action_std = torch.exp(action_logstd)
-        probs = Normal(action_mean, action_std)
+        actor_logits = einops.rearrange(
+            self.actor_logits(x),
+            "b (n c) -> b n c",
+            n=np.prod(envs.single_action_space.shape),
+            c=NUM_COMBS,
+        )
+        actor_probs = torch.softmax(actor_logits, dim=-1)
+        bounds = einops.repeat(
+            self.bounds,
+            "n k -> b n k",
+            b=len(actor_probs),
+            k=2,
+            n=np.prod(envs.single_action_space.shape),
+        ).to(actor_probs.device)
+        probs = CombDistribution(actor_probs, bounds=bounds)
         if action is None:
             action = probs.sample()
         return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
@@ -141,12 +161,13 @@ if __name__ == "__main__":
     run_name = f"{args.gym_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
     if args.track:
         import wandb
-
+        config = vars(args)
+        config.update(num_combs=NUM_COMBS)
         wandb.init(
             project=args.wandb_project_name,
             entity=args.wandb_entity,
             sync_tensorboard=True,
-            config=vars(args),
+            config=config,
             name=run_name,
             monitor_gym=True,
             save_code=True,

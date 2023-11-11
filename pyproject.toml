@@ -5,14 +5,15 @@ description = ""
 authors = ["Iclr Blog <2022iclrblogpost@tfgo.dev>"]
 
 [tool.poetry.dependencies]
-python = ">=3.7.1,<3.10"
-torch = "^1.7.1"
+python = ">=3.8.0,<3.10"
+torch = "2.0.0"
 stable-baselines3 = "^1.1.0"
 tensorboard = "^2.5.0"
 wandb = "0.12.1"
 pyglet = "^1.5.19"
 opencv-python = "^4.5.3"
 gym = "^0.21.0"
+einops = "^0.7.0"
 
 # Optional dependencies
 spyder =  {version = "^5.1.1", optional = true}

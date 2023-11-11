@@ -1,5 +1,4 @@
 from __future__ import annotations
-import math
 
 import einops
 import numpy as np
@@ -19,11 +18,7 @@ def support_to_value(coefficients: torch.Tensor, support: torch.Tensor) -> torch
         )
     assert support.ndim == 2, "support must be 1 or 2 dimensional"
     assert support.shape[-1] == coefficients.shape[-1], "support and coefficients must match"
-    try:
-        assert torch.allclose(einops.reduce(coefficients, "... n -> ...", "sum"), torch.tensor(1.)), "coefficients must sum to 1"
-    except RuntimeError:
-        # happens when vmapping (currently not supported)
-        ...
+    assert torch.allclose(einops.reduce(coefficients, "... n -> ...", "sum"), torch.tensor(1.)), "coefficients must sum to 1"
     return einops.einsum(coefficients, support, "... n, ... n -> ...")
 
 def value_to_support(values: torch.Tensor, support: torch.Tensor) -> torch.Tensor:
@@ -119,28 +114,34 @@ class CombDistribution(torch.distributions.Distribution):
     def rsample(self, sample_shape: torch.Size=torch.Size([])) -> torch.Tensor:
         if isinstance(sample_shape, int):
             sample_shape = (sample_shape,)
-        n = math.prod(sample_shape)
+        n = int(np.prod(sample_shape))
         # sample n points from the cdf using linear interpolation
         random_points = torch.rand(
             (self.n, n,),
             device=self._cdf.device,
         )
 
-        coefficients = torch.vmap(value_to_support, in_dims=(-1, None))(random_points, self._cdf)
-        values = torch.vmap(support_to_value, in_dims=(0, None))(coefficients, self._points)
+        coefficients = torch.stack([
+            value_to_support(r, self._cdf)
+            for r in torch.permute(random_points, (-1, *range(random_points.ndim - 1)))
+        ])
+        values = torch.stack([
+            support_to_value(c, self._points)
+            for c in coefficients
+        ])
         return torch.reshape(values, sample_shape + self.batch_shape)
 
     def log_prob(self, action: torch.Tensor) -> torch.Tensor:
         action_shape = action.shape
         action = torch.reshape(
             action,
-            (-1, math.prod(self.batch_shape))
+            (-1, int(np.prod(self.batch_shape)))
         )
 
-        probability_coefficients = torch.vmap(
-            value_to_support,
-            in_dims=(0, None)
-        )(action, self._points)
+        probability_coefficients = torch.stack([
+            value_to_support(a, self._points)
+            for a in action
+        ])
 
         probability_weights = support_to_value(
             probability_coefficients,
